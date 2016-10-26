@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        applicationId "ca.qc.cstj.androis.navigationdemo"
+        applicationId "ca.qc.cstj.cinecheck.cinecheck"
         minSdkVersion 23
         targetSdkVersion 23
         versionCode 1
@@ -25,4 +25,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:support-v4:23.4.0'
     compile 'com.android.support:design:23.4.0'
+    compile 'com.android.support:recyclerview-v7:23.4.0'
+    compile 'com.google.code.gson:gson:2.4'
+    compile 'com.koushikdutta.ion:ion:2.+'
 }

@@ -1,4 +1,4 @@
-package ca.qc.cstj.androis.navigationdemo;
+package ca.qc.cstj.cinecheck.cinecheck;
 
 import org.junit.Test;
 

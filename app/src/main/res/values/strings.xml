@@ -1,17 +1,22 @@
 <resources>
-    <string name="app_name">NavigationDemo</string>
+    <string name="app_name">CineCheck</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
-    <string name="accueil">Accueil</string>
-    <string name="note">Note</string>
-    <string name="notifications">Notifications</string>
-    <string name="parametres">Paramètres</string>
+    <string name="cinemas">Cinemas</string>
+    <string name="films">Films</string>
+    <string name="options">Options</string>
     <string name="propos">À propos</string>
-    <string name="autres">Autres</string>
+    <string name="nous_contacter">Nous contacter</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Titres des activitées -->
+    <string name="t_cinemas">Cinemas</string>
+    <string name="t_films">Films</string>
+
+    <string-array name="nav_activities_titles">
+        <item>@string/t_cinemas</item>
+        <item>@string/t_films</item>
+    </string-array>
 </resources>
