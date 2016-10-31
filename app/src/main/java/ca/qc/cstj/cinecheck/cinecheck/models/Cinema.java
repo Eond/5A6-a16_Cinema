@@ -8,10 +8,12 @@ import com.google.gson.JsonObject;
 public class Cinema {
     private String nom;
     private String adresse;
+    private String url;
 
     public Cinema(JsonObject object) {
         this.nom = object.getAsJsonPrimitive("nom").getAsString();
         this.adresse = object.getAsJsonPrimitive("adresse").getAsString();
+        this.url = object.getAsJsonPrimitive("url").getAsString();
     }
 
     public String getNom(){
@@ -21,4 +23,6 @@ public class Cinema {
     public String getAdresse() {
         return adresse;
     }
+
+    public String getUrl() { return url; }
 }

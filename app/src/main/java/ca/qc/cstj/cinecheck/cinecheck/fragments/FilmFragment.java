@@ -2,10 +2,12 @@ package ca.qc.cstj.cinecheck.cinecheck.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,7 @@ import ca.qc.cstj.cinecheck.cinecheck.R;
 import ca.qc.cstj.cinecheck.cinecheck.helpers.Services;
 import ca.qc.cstj.cinecheck.cinecheck.models.Film;
 
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,6 +87,7 @@ public class FilmFragment extends Fragment {
                     .setCallback(new FutureCallback<JsonArray>() {
                         @Override
                         public void onCompleted(Exception e, JsonArray result) {
+                            Log.d("LOADING FILM",result.toString());
                             FilmRecyclerViewAdapter pokemonAdapter = new FilmRecyclerViewAdapter(createFilmList(result), mListener);
                             recyclerView.setAdapter(pokemonAdapter);
                         }

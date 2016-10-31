@@ -8,6 +8,7 @@
     android:layout_height="match_parent"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
+    android:layout_marginTop="@dimen/app_bar_height_fix"
     app:layoutManager="LinearLayoutManager"
     tools:context="ca.qc.cstj.cinecheck.cinecheck.fragments.FilmFragment"
     tools:listitem="@layout/fragment_film_item" />

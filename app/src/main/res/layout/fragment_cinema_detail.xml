@@ -1,0 +1,39 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/app_bar_height_fix"
+    tools:context="ca.qc.cstj.cinecheck.cinecheck.fragments.CinemaDetailFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id = "@+id/cindet_nom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="(Cinema Nom)" />
+    <TextView
+        android:id = "@+id/cindet_adresse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cindet_nom"
+        android:text="(Cinema Adresse)" />
+    <TextView
+        android:id = "@+id/cindet_ville"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cindet_adresse"
+        android:text="(Cinema Ville)" />
+    <TextView
+        android:id = "@+id/cindet_cp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/cindet_adresse"
+        android:text="(Cinema Code Postal)" />
+    <TextView
+        android:id = "@+id/cindet_telephone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cindet_ville"
+        android:text="(Cinema Telephone)" />
+
+</RelativeLayout>

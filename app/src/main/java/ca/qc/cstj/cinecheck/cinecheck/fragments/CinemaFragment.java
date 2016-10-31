@@ -6,14 +6,17 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.Response;
 
 import ca.qc.cstj.cinecheck.cinecheck.R;
 import ca.qc.cstj.cinecheck.cinecheck.helpers.Services;
@@ -81,11 +84,18 @@ public class CinemaFragment extends Fragment {
             Ion.with(context)
                     .load(Services.BASE_URL.concat("/cinemas/"))
                     .asJsonArray()
-                    .setCallback(new FutureCallback<JsonArray>() {
+                    .withResponse()
+                    .setCallback(new FutureCallback<Response<JsonArray>>() {
                         @Override
-                        public void onCompleted(Exception e, JsonArray result) {
-                            CinemaRecyclerViewAdapter cinemaAdapter = new CinemaRecyclerViewAdapter(createCinemaList(result), mListener);
-                            recyclerView.setAdapter(cinemaAdapter);
+                        public void onCompleted(Exception e, Response<JsonArray> result) {
+                            Log.d("Cinemas GET", "Headers : ".concat(result.getHeaders().message()));
+                            if (result.getHeaders().code() == 200) {
+                                CinemaRecyclerViewAdapter cinemaAdapter = new CinemaRecyclerViewAdapter(createCinemaList(result.getResult()), mListener);
+                                recyclerView.setAdapter(cinemaAdapter);
+                            } else {
+                                JsonObject err = result.getResult().getAsJsonObject();
+                                Log.e("Cinemas GET", "Got Error : ".concat(err.get("status").getAsString()).concat(" - ").concat(err.get("message").getAsString()));
+                            }
                         }
                     });
         }
