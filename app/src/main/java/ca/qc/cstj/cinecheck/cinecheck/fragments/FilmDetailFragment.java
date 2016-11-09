@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
@@ -21,12 +22,12 @@ import ca.qc.cstj.cinecheck.cinecheck.helpers.Services;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link CinemaDetailFragment.OnFragmentInteractionListener} interface
+ * {@link FilmDetailFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link CinemaDetailFragment#newInstance} factory method to
+ * Use the {@link FilmDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CinemaDetailFragment extends Fragment {
+public class FilmDetailFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String URL = "url";
@@ -36,13 +37,13 @@ public class CinemaDetailFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public CinemaDetailFragment() {
+    public FilmDetailFragment() {
         // Required empty public constructor
     }
 
     // TODO: Rename and change types and number of parameters
-    public static CinemaDetailFragment newInstance(String uuid) {
-        CinemaDetailFragment fragment = new CinemaDetailFragment();
+    public static FilmDetailFragment newInstance(String uuid) {
+        FilmDetailFragment fragment = new FilmDetailFragment();
         Bundle args = new Bundle();
         args.putString(URL, uuid);
         fragment.setArguments(args);
@@ -61,35 +62,38 @@ public class CinemaDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View view = inflater.inflate(R.layout.fragment_cinema_detail, container, false);
-
-        Ion.with(getContext())
+        final View view = inflater.inflate(R.layout.fragment_film_detail, container, false);
+        final Context context = getContext();
+        Ion.with(context)
                 .load(mUrl)
                 .asJsonObject()
                 .withResponse()
                 .setCallback(new FutureCallback<Response<JsonObject>>() {
                     @Override
                     public void onCompleted(Exception e, Response<JsonObject> result) {
+                        final String img;
+                        final ImageView imgView = (ImageView) view.findViewById(R.id.fildet_img);
                         if (result.getHeaders().code() == 200) {
-                            TextView textView = (TextView) view.findViewById(R.id.cindet_nom);
-                            textView.setText(result.getResult().getAsJsonPrimitive("nom").getAsString());
-                            textView = (TextView) view.findViewById(R.id.cindet_adresse);
-                            textView.setText(result.getResult().getAsJsonPrimitive("adresse").getAsString());
-                            textView = (TextView) view.findViewById(R.id.cindet_cp);
-                            textView.setText(result.getResult().getAsJsonPrimitive("codePostal").getAsString());
-                            textView = (TextView) view.findViewById(R.id.cindet_ville);
-                            textView.setText(result.getResult().getAsJsonPrimitive("ville").getAsString());
-                            textView = (TextView) view.findViewById(R.id.cindet_telephone);
-                            textView.setText(result.getResult().getAsJsonPrimitive("telephone").getAsString());
+                            img = result.getResult().getAsJsonPrimitive("imageUrl").getAsString();
+                            TextView textView = (TextView) view.findViewById(R.id.fildet_titre);
+                            textView.setText(result.getResult().getAsJsonPrimitive("titre").getAsString());
                         } else if (result.getHeaders().code() >= 500 && result.getHeaders().code() < 510) {
+                            img = "";
                             JsonObject err = result.getResult().getAsJsonObject();
                             String dMessage = err.get("developperMessage").getAsJsonObject().get("code").getAsString();
                             String code = err.get("status").getAsString();
                             Log.e("Error ".concat(code), dMessage);
                         } else {
+                            img = "";
                             JsonObject err = result.getResult().getAsJsonObject();
-                            Log.e("Cinema GET", "Got Error : ".concat(err.get("status").getAsString()).concat(" - ").concat(err.get("message").getAsString()));
+                            Log.e("Film GET", "Got Error : ".concat(err.get("status").getAsString()).concat(" - ").concat(err.get("message").getAsString()));
                         }
+                        Ion.with(context)
+                                .load(Services.FILMS_IMG.concat(img).concat(".png"))
+                                .withBitmap()
+                                .placeholder(R.drawable.spinner)
+                                .error(R.drawable.error)
+                                .intoImageView(imgView);
                     }
                 });
 
@@ -102,8 +106,8 @@ public class CinemaDetailFragment extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
-/*
-    @Override
+
+    /*@Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
@@ -112,14 +116,14 @@ public class CinemaDetailFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-*/
+    }*/
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

@@ -22,4 +22,9 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="pays">Pays :</string>
+    <string name="genre">Genre :</string>
+    <string name="classification">Classification :</string>
+    <string name="duree">Durée :</string>
+    <string name="realisateur">Réalisateur :</string>
 </resources>

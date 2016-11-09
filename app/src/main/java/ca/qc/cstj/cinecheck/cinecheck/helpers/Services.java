@@ -5,5 +5,5 @@ package ca.qc.cstj.cinecheck.cinecheck.helpers;
  */
 public class Services {
     public static final String BASE_URL = "https://a16-cinemamtl-erifonaclov.c9users.io";
-    public static final String FILMS_IMG = "https://a16-cinemamtl-erifonaclov.c9users.io/img/films";
+    public static final String FILMS_IMG = "https://a16-cinemamtl-erifonaclov.c9users.io/img/";
 }

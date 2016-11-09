@@ -8,5 +8,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="app_bar_height_fix">60dp</dimen>
-    <dimen name="film_img_height">60dp</dimen>
+    <dimen name="film_small_img_size">50dp</dimen>
+    <dimen name="film_big_img_size">400dp</dimen>
+    <dimen name="size_titre">20sp</dimen>
 </resources>

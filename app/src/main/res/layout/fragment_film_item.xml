@@ -7,9 +7,10 @@
 
     <ImageView
         android:id="@+id/imgFilm"
-        android:layout_width="0sp"
-        android:layout_height="@dimen/film_img_height"
-        android:maxHeight="@dimen/film_img_height"
+        android:layout_width="@dimen/film_small_img_size"
+        android:layout_height="@dimen/film_small_img_size"
+        android:maxHeight="@dimen/film_small_img_size"
+        android:maxWidth="@dimen/film_small_img_size"
         android:layout_weight="1"
         android:layout_margin="0dp"
         android:adjustViewBounds="false"
@@ -17,8 +18,8 @@
 
     <TextView
         android:id="@+id/lblTitreFilm"
-        android:layout_width="0sp"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_weight="4"
         android:layout_margin="@dimen/text_margin"
         android:gravity="center"

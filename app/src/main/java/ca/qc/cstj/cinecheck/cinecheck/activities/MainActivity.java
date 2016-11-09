@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import ca.qc.cstj.cinecheck.cinecheck.R;
 import ca.qc.cstj.cinecheck.cinecheck.fragments.CinemaDetailFragment;
 import ca.qc.cstj.cinecheck.cinecheck.fragments.CinemaFragment;
+import ca.qc.cstj.cinecheck.cinecheck.fragments.FilmDetailFragment;
 import ca.qc.cstj.cinecheck.cinecheck.fragments.FilmFragment;
 import ca.qc.cstj.cinecheck.cinecheck.helpers.FragmentTags;
 import ca.qc.cstj.cinecheck.cinecheck.models.Cinema;
@@ -145,6 +146,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onListFragmentInteraction(Cinema item) {
+        if (item.getUrl() == "") {
+            return;
+        }
         final Fragment fragment = CinemaDetailFragment.newInstance(item.getUrl());
 
         Runnable changeFragmentThread = new Runnable() {
@@ -163,6 +167,22 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onListFragmentInteraction(Film item) {
+        if (item.getUrl() == "") {
+            return;
+        }
+        final Fragment fragment = FilmDetailFragment.newInstance(item.getUrl());
 
+        Runnable changeFragmentThread = new Runnable() {
+            @Override
+            public void run() {
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                fragmentTransaction.replace(R.id.contentframe, fragment, CURRENT_TAG.toString());
+                fragmentTransaction.addToBackStack(CURRENT_TAG.toString());
+                fragmentTransaction.commitAllowingStateLoss();
+            }
+        };
+
+        handler.post(changeFragmentThread);
     }
 }

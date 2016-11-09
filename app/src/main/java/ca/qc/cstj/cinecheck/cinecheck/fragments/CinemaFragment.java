@@ -15,6 +15,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.HeadersResponse;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
 
@@ -88,18 +89,44 @@ public class CinemaFragment extends Fragment {
                     .setCallback(new FutureCallback<Response<JsonArray>>() {
                         @Override
                         public void onCompleted(Exception e, Response<JsonArray> result) {
-                            Log.d("Cinemas GET", "Headers : ".concat(result.getHeaders().message()));
+                            Log.d("Cinemas GET", "Headers : (".concat(String.valueOf(result.getHeaders().code())).concat(") ").concat(result.getHeaders().message()));
+                            if (result.getException() != null) {
+                                Log.e("Exception sent",result.getException().getMessage());
+                            }
                             if (result.getHeaders().code() == 200) {
                                 CinemaRecyclerViewAdapter cinemaAdapter = new CinemaRecyclerViewAdapter(createCinemaList(result.getResult()), mListener);
                                 recyclerView.setAdapter(cinemaAdapter);
+                            } else if (result.getHeaders().code() >= 500 && result.getHeaders().code() < 510) {
+                                JsonObject err = new JsonObject();
+                                try {
+                                    err = result.getResult().get(0).getAsJsonObject();
+                                    String dMessage = err.get("developperMessage").getAsJsonObject().get("code").getAsString();
+                                    String code = err.get("status").getAsString();
+                                    Log.e("Error ".concat(code), dMessage);
+                                } catch (NullPointerException ne) {
+                                    err.addProperty("message", result.getHeaders().message());
+                                    err.addProperty("status", result.getHeaders().code());
+                                }
+                                CinemaRecyclerViewAdapter cinemaAdapter = new CinemaRecyclerViewAdapter(createCinemaError(err), mListener);
+                                recyclerView.setAdapter(cinemaAdapter);
                             } else {
-                                JsonObject err = result.getResult().getAsJsonObject();
+                                JsonObject err = result.getResult().get(0).getAsJsonObject();
                                 Log.e("Cinemas GET", "Got Error : ".concat(err.get("status").getAsString()).concat(" - ").concat(err.get("message").getAsString()));
                             }
                         }
                     });
         }
         return view;
+    }
+
+    private List<Cinema> createCinemaError(JsonObject error) {
+        List<Cinema> retrun = new ArrayList<>();
+        JsonObject jo = new JsonObject();
+        jo.addProperty("nom", error.getAsJsonPrimitive("message").getAsString());
+        jo.addProperty("adresse", error.getAsJsonPrimitive("status").getAsString());
+        jo.addProperty("url", "");
+        retrun.add(new Cinema(jo));
+        return retrun;
     }
 
     private List<Cinema> createCinemaList(JsonArray result) {

@@ -2,6 +2,7 @@ package ca.qc.cstj.cinecheck.cinecheck.fragments;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,7 @@ public class FilmRecyclerViewAdapter extends RecyclerView.Adapter<FilmRecyclerVi
         holder.mItem = film;
         //holder.imgFilm.setText(mValues.get(position).imgFilm);
         holder.lblTitreFilm.setText(mValues.get(position).getTitre());
+        Log.d("FILM IMG", Services.FILMS_IMG.concat(film.getImgUrl()).concat(".png"));
 
         Ion.with(context)
                 .load(Services.FILMS_IMG.concat(film.getImgUrl()).concat(".png"))

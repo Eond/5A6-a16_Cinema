@@ -28,6 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/cindet_adresse"
+        android:layout_below="@id/cindet_nom"
         android:text="(Cinema Code Postal)" />
     <TextView
         android:id = "@+id/cindet_telephone"

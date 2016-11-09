@@ -14,11 +14,14 @@ import android.view.ViewGroup;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.Response;
 
 import ca.qc.cstj.cinecheck.cinecheck.R;
 import ca.qc.cstj.cinecheck.cinecheck.helpers.Services;
+import ca.qc.cstj.cinecheck.cinecheck.models.Cinema;
 import ca.qc.cstj.cinecheck.cinecheck.models.Film;
 
 import java.io.Console;
@@ -84,16 +87,49 @@ public class FilmFragment extends Fragment {
             Ion.with(context)
                     .load(Services.BASE_URL.concat("/films/"))
                     .asJsonArray()
-                    .setCallback(new FutureCallback<JsonArray>() {
+                    .withResponse()
+                    .setCallback(new FutureCallback<Response<JsonArray>>() {
                         @Override
-                        public void onCompleted(Exception e, JsonArray result) {
-                            Log.d("LOADING FILM",result.toString());
-                            FilmRecyclerViewAdapter pokemonAdapter = new FilmRecyclerViewAdapter(createFilmList(result), mListener);
-                            recyclerView.setAdapter(pokemonAdapter);
+                        public void onCompleted(Exception e, Response<JsonArray> result) {
+                            Log.d("Films GET", "Headers : (".concat(String.valueOf(result.getHeaders().code())).concat(") ").concat(result.getHeaders().message()));
+                            if (result.getException() != null) {
+                                Log.e("Exception sent",result.getException().getMessage());
+                            }
+                            if (result.getHeaders().code() == 200) {
+                                FilmRecyclerViewAdapter filmAdapter = new FilmRecyclerViewAdapter(createFilmList(result.getResult()), mListener);
+                                recyclerView.setAdapter(filmAdapter);
+                            } else if (result.getHeaders().code() >= 500 && result.getHeaders().code() < 510) {
+                                JsonObject err = new JsonObject();
+                                try {
+                                    err = result.getResult().get(0).getAsJsonObject();
+                                    String dMessage = err.get("developperMessage").getAsJsonObject().get("code").getAsString();
+                                    String code = err.get("status").getAsString();
+                                    Log.e("Error ".concat(code), dMessage);
+                                } catch (NullPointerException ne) {
+                                    err.addProperty("message", result.getHeaders().message());
+                                    err.addProperty("status", result.getHeaders().code());
+                                }
+                                FilmRecyclerViewAdapter filmAdapter = new FilmRecyclerViewAdapter(createFilmError(result.getResult().get(0).getAsJsonObject()), mListener);
+                                recyclerView.setAdapter(filmAdapter);
+                            } else {
+                                JsonObject err = result.getResult().getAsJsonObject();
+                                Log.e("Films GET", "Got Error : ".concat(err.get("status").getAsString()).concat(" - ").concat(err.get("message").getAsString()));
+                            }
                         }
                     });
         }
         return view;
+    }
+
+    private List<Film> createFilmError(JsonObject error) {
+        List<Film> retrun = new ArrayList<>();
+        JsonObject jo = new JsonObject();
+        String message = error.getAsJsonPrimitive("status").getAsString().concat(" : ").concat(error.getAsJsonPrimitive("message").getAsString());
+        jo.addProperty("titre", message);
+        jo.addProperty("imageUrl", "");
+        jo.addProperty("url", "");
+        retrun.add(new Film(jo));
+        return retrun;
     }
 
 
