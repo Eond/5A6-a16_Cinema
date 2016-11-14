@@ -27,4 +27,5 @@
     <string name="classification">Classification :</string>
     <string name="duree">Durée :</string>
     <string name="realisateur">Réalisateur :</string>
+    <string name="hor_duree"> Durée : </string>
 </resources>

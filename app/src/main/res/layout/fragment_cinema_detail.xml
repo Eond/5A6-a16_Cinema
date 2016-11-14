@@ -16,7 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/cindet_nom"
-        android:text="(Cinema Adresse)" />
+        android:text="(Cinema Adresse), " />
     <TextView
         android:id = "@+id/cindet_ville"
         android:layout_width="wrap_content"
@@ -36,5 +36,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/cindet_ville"
         android:text="(Cinema Telephone)" />
+    <FrameLayout
+        android:id="@+id/cinema_horaires"
+        android:layout_below="@id/cindet_telephone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></FrameLayout>
 
 </RelativeLayout>

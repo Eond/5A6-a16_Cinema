@@ -10,10 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
+
+import java.util.ArrayList;
 
 import ca.qc.cstj.cinecheck.cinecheck.R;
 import ca.qc.cstj.cinecheck.cinecheck.helpers.Services;
@@ -35,6 +39,8 @@ public class CinemaDetailFragment extends Fragment {
     private String mUrl;
 
     private OnFragmentInteractionListener mListener;
+
+    public ArrayList<String>horaireUrls = new ArrayList<>();
 
     public CinemaDetailFragment() {
         // Required empty public constructor
@@ -74,13 +80,18 @@ public class CinemaDetailFragment extends Fragment {
                             TextView textView = (TextView) view.findViewById(R.id.cindet_nom);
                             textView.setText(result.getResult().getAsJsonPrimitive("nom").getAsString());
                             textView = (TextView) view.findViewById(R.id.cindet_adresse);
-                            textView.setText(result.getResult().getAsJsonPrimitive("adresse").getAsString());
+                            textView.setText(result.getResult().getAsJsonPrimitive("adresse").getAsString().concat(", "));
                             textView = (TextView) view.findViewById(R.id.cindet_cp);
                             textView.setText(result.getResult().getAsJsonPrimitive("codePostal").getAsString());
                             textView = (TextView) view.findViewById(R.id.cindet_ville);
                             textView.setText(result.getResult().getAsJsonPrimitive("ville").getAsString());
                             textView = (TextView) view.findViewById(R.id.cindet_telephone);
                             textView.setText(result.getResult().getAsJsonPrimitive("telephone").getAsString());
+                            for (JsonElement jeh : result.getResult().get("horaires").getAsJsonArray()) {
+                                horaireUrls.add(jeh.getAsJsonObject().get("urlc").getAsString());
+                            }
+
+
                         } else if (result.getHeaders().code() >= 500 && result.getHeaders().code() < 510) {
                             JsonObject err = result.getResult().getAsJsonObject();
                             String dMessage = err.get("developperMessage").getAsJsonObject().get("code").getAsString();

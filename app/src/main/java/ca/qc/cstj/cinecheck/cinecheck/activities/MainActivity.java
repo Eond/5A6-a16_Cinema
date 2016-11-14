@@ -16,11 +16,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ca.qc.cstj.cinecheck.cinecheck.R;
 import ca.qc.cstj.cinecheck.cinecheck.fragments.CinemaDetailFragment;
 import ca.qc.cstj.cinecheck.cinecheck.fragments.CinemaFragment;
 import ca.qc.cstj.cinecheck.cinecheck.fragments.FilmDetailFragment;
 import ca.qc.cstj.cinecheck.cinecheck.fragments.FilmFragment;
+import ca.qc.cstj.cinecheck.cinecheck.fragments.HoraireFragment;
 import ca.qc.cstj.cinecheck.cinecheck.helpers.FragmentTags;
 import ca.qc.cstj.cinecheck.cinecheck.models.Cinema;
 import ca.qc.cstj.cinecheck.cinecheck.models.Film;
@@ -37,6 +41,7 @@ public class MainActivity extends AppCompatActivity
     private static FragmentTags CURRENT_TAG = FragmentTags.CINEMAS;
 
     private Handler handler;
+    private ArrayList<String> horaireUrls = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +81,7 @@ public class MainActivity extends AppCompatActivity
 
         handler.post(changeFragmentThread);
         drawer.closeDrawer(GravityCompat.START);
-        invalidateOptionsMenu();;
+        invalidateOptionsMenu();
     }
 
     private Fragment getCurrentFragment() {
@@ -149,7 +154,7 @@ public class MainActivity extends AppCompatActivity
         if (item.getUrl() == "") {
             return;
         }
-        final Fragment fragment = CinemaDetailFragment.newInstance(item.getUrl());
+        final CinemaDetailFragment fragment = CinemaDetailFragment.newInstance(item.getUrl());
 
         Runnable changeFragmentThread = new Runnable() {
             @Override
@@ -159,6 +164,20 @@ public class MainActivity extends AppCompatActivity
                 fragmentTransaction.replace(R.id.contentframe, fragment, CURRENT_TAG.toString());
                 fragmentTransaction.addToBackStack(CURRENT_TAG.toString());
                 fragmentTransaction.commitAllowingStateLoss();
+
+                Runnable changeFragmentThread = new Runnable() {
+                    @Override
+                    public void run() {
+                        HoraireFragment fragmenth = HoraireFragment.newInstanceC(1, fragment.horaireUrls);
+                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                        fragmentTransaction.replace(R.id.contentframe, fragmenth, CURRENT_TAG.toString());
+                        fragmentTransaction.addToBackStack(CURRENT_TAG.toString());
+                        fragmentTransaction.commitAllowingStateLoss();
+                    }
+                };
+
+                handler.post(changeFragmentThread);
             }
         };
 
