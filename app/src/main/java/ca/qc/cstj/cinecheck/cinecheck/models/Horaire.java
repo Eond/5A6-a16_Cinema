@@ -1,5 +1,7 @@
 package ca.qc.cstj.cinecheck.cinecheck.models;
 
+import android.util.Log;
+
 import com.google.gson.JsonObject;
 
 /**
@@ -17,6 +19,7 @@ public class Horaire {
     private String dateHeure;
 
     public Horaire(JsonObject object) {
+        Log.d("Fragment Horaire", object.toString());
         this.cinemaURL = object.getAsJsonPrimitive("cinema").getAsJsonObject().getAsJsonPrimitive("url").getAsString();
         this.cinema = object.getAsJsonPrimitive("cinema").getAsJsonObject().getAsJsonPrimitive("nom").getAsString();
         this.filmURL = object.getAsJsonPrimitive("film").getAsJsonObject().getAsJsonPrimitive("url").getAsString();

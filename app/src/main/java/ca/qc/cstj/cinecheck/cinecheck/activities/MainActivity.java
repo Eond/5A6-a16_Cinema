@@ -6,6 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -155,33 +156,38 @@ public class MainActivity extends AppCompatActivity
             return;
         }
         final CinemaDetailFragment fragment = CinemaDetailFragment.newInstance(item.getUrl());
+        Log.d("Cinema Detail", "START");
+        final HoraireFragment fragmenth = HoraireFragment.newInstanceC(1, fragment.horaireUrls);
+        Log.d("Horaires Cinema", "START");
 
         Runnable changeFragmentThread = new Runnable() {
             @Override
             public void run() {
+                Log.d("Cinema Detail", "RUN");
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
                 fragmentTransaction.replace(R.id.contentframe, fragment, CURRENT_TAG.toString());
                 fragmentTransaction.addToBackStack(CURRENT_TAG.toString());
                 fragmentTransaction.commitAllowingStateLoss();
+                Log.d("Cinema Detail", "END");
+            }
+        };
 
-                Runnable changeFragmentThread = new Runnable() {
-                    @Override
-                    public void run() {
-                        HoraireFragment fragmenth = HoraireFragment.newInstanceC(1, fragment.horaireUrls);
-                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-                        fragmentTransaction.replace(R.id.contentframe, fragmenth, CURRENT_TAG.toString());
-                        fragmentTransaction.addToBackStack(CURRENT_TAG.toString());
-                        fragmentTransaction.commitAllowingStateLoss();
-                    }
-                };
-
-                handler.post(changeFragmentThread);
+        Runnable changeFragmentThreadH = new Runnable() {
+            @Override
+            public void run() {
+                Log.d("Horaires Cinema", "RUN");
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                fragmentTransaction.replace(R.id.cinema_horaires, fragmenth, CURRENT_TAG.toString());
+                //fragmentTransaction.addToBackStack(CURRENT_TAG.toString());
+                fragmentTransaction.commitAllowingStateLoss();
+                Log.d("Horaires Cinema", "END");
             }
         };
 
         handler.post(changeFragmentThread);
+        handler.post(changeFragmentThreadH);
     }
 
     @Override
