@@ -19,10 +19,10 @@ import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
 
 import ca.qc.cstj.cinecheck.cinecheck.R;
-import ca.qc.cstj.cinecheck.cinecheck.helpers.Services;
-import ca.qc.cstj.cinecheck.cinecheck.models.Horaire;
+import ca.qc.cstj.cinecheck.cinecheck.models.Commentaire;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -31,59 +31,40 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class HoraireFragment extends Fragment {
+public class CommentaireFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    private static final String ARG_INSTANCE_PARENT = "instance-parent";
     private static final String ARG_URL = "url";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private String mInstanceParent = "";
     private String mUrl;
-    private List<Horaire> horaires = new ArrayList<>();
-    private Boolean loadError = false;
     private OnListFragmentInteractionListener mListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public HoraireFragment() {
+    public CommentaireFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static HoraireFragment newInstanceF(int columnCount, String url) {
-        HoraireFragment fragment = new HoraireFragment();
+    public static CommentaireFragment newInstance(String url) {
+        CommentaireFragment fragment = new CommentaireFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        args.putString(ARG_INSTANCE_PARENT, "film");
+        args.putInt(ARG_COLUMN_COUNT, 1);
         args.putString(ARG_URL, url);
         fragment.setArguments(args);
-        Log.d("Horaires Instance", "Parent : Film");
-        return fragment;
-    }
-
-    public static HoraireFragment newInstanceC(int columnCount, String url) {
-        HoraireFragment fragment = new HoraireFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        args.putString(ARG_INSTANCE_PARENT, "cinema");
-        args.putString(ARG_URL, url);
-        fragment.setArguments(args);
-        Log.d("Horaires Instance", "Parent : Cinema");
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("Horaire OnCreate", "Reached.");
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-            mInstanceParent = getArguments().getString(ARG_INSTANCE_PARENT);
             mUrl = getArguments().getString(ARG_URL);
         }
     }
@@ -91,12 +72,10 @@ public class HoraireFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("Horaire OnCreateView", "Reached");
-        View view = inflater.inflate(R.layout.fragment_horaire_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_commentaire_list, container, false);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
-            Log.d("Horaire OnCreateView", "START");
             final Context context = view.getContext();
             final RecyclerView recyclerView = (RecyclerView) view;
             if (mColumnCount <= 1) {
@@ -104,22 +83,21 @@ public class HoraireFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            Log.d("Horaire OnCreateView", "URL : ".concat(mUrl));
             Ion.with(context)
-                    .load(mUrl.concat("/horaires/?fields=duree,nom,titre,imageUrl&expand=true"))
+                    .load(mUrl.concat("/commentaires/"))
                     .asJsonArray()
                     .withResponse()
                     .setCallback(new FutureCallback<Response<JsonArray>>() {
                         @Override
                         public void onCompleted(Exception e, Response<JsonArray> result) {
-                            Log.d("Horaire GET", "Reached");
-                            Log.d("Horaire GET", "Headers : (".concat(String.valueOf(result.getHeaders().code())).concat(") ").concat(result.getHeaders().message()));
+                            Log.d("Commentaire GET", "Reached");
+                            Log.d("Commentaire GET", "Headers : (".concat(String.valueOf(result.getHeaders().code())).concat(") ").concat(result.getHeaders().message()));
                             if (result.getException() != null) {
                                 Log.e("Exception sent", result.getException().getMessage());
                             }
-                            List<Horaire> results = new ArrayList<Horaire>();
+                            List<Commentaire> results = new ArrayList<Commentaire>();
                             if (result.getHeaders().code() == 200) {
-                                results = createHoraireList(result.getResult());
+                                results = createCommentaireList(result.getResult());
                             } else if (result.getHeaders().code() >= 500 && result.getHeaders().code() < 510) {
                                 JsonArray err = new JsonArray();
                                 try {
@@ -133,55 +111,40 @@ public class HoraireFragment extends Fragment {
                                     jo.addProperty("status", result.getHeaders().code());
                                     err.set(0, jo);
                                 }
-                                results = createHoraireError(err);
+                                results = createCommentaireError(err);
                             } else {
                                 JsonObject err = result.getResult().get(0).getAsJsonObject();
-                                Log.e("Horaire GET", "Got Error : ".concat(err.get("status").getAsString()).concat(" - ").concat(err.get("message").getAsString()));
+                                Log.e("Commentaire GET", "Got Error : ".concat(err.get("status").getAsString()).concat(" - ").concat(err.get("message").getAsString()));
                             }
-                            HoraireRecyclerViewAdapter horaireAdapter = new HoraireRecyclerViewAdapter(results, mListener, mInstanceParent);
-                            recyclerView.setAdapter(horaireAdapter);
+                            CommentaireRecyclerViewAdapter commAdapter = new CommentaireRecyclerViewAdapter(results, mListener);
+                            recyclerView.setAdapter(commAdapter);
                         }
                     });
         }
         return view;
     }
 
-    private List<Horaire> createHoraireList(JsonArray results) {
-        List<Horaire> horaires = new ArrayList<>();
-
-        for(JsonElement element : results) {
-            horaires.add(new Horaire(element.getAsJsonObject()));
+    private List<Commentaire> createCommentaireList(JsonArray results) {
+        List<Commentaire> comms = new ArrayList<>();
+        for (JsonElement comm : results) {
+            comms.add(new Commentaire(comm.getAsJsonObject()));
         }
-
-        return horaires;
+        return comms;
     }
 
-    private List<Horaire> createHoraireError(JsonArray errorA) {
+    private List<Commentaire> createCommentaireError(JsonArray err) {
         JsonObject jo = new JsonObject();
-        JsonObject error = errorA.get(0).getAsJsonObject();
-        jo.addProperty("urlc", "");
-        jo.addProperty("urlf", "");
-        jo.addProperty("dateHeure", "");
+        JsonObject error = err.get(0).getAsJsonObject();
+        jo.addProperty("auteur", error.getAsJsonPrimitive("status").getAsString());
+        jo.addProperty("texte", error.getAsJsonPrimitive("message").getAsString());
 
-        JsonObject sjof = new JsonObject();
-        sjof.addProperty("url", "");
-        sjof.addProperty("titre", error.getAsJsonPrimitive("status").getAsString().concat(" - ").concat(error.getAsJsonPrimitive("message").getAsString()));
-        sjof.addProperty("imageUrl", "");
-        sjof.addProperty("duree", 0);
+        List<Commentaire> retour = new ArrayList<>();
+        retour.add(new Commentaire(jo));
 
-        JsonObject sjoc = new JsonObject();
-        sjof.addProperty("url", "");
-        sjof.addProperty("nom", error.getAsJsonPrimitive("status").getAsString().concat(" - ").concat(error.getAsJsonPrimitive("message").getAsString()));
-
-        jo.add("film", sjof);
-        jo.add("cinema", sjoc);
-
-        List<Horaire> lh = new ArrayList<>();
-        lh.add(new Horaire(jo));
-
-        return lh;
+        return retour;
     }
-    @Override
+
+    /*@Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnListFragmentInteractionListener) {
@@ -192,14 +155,10 @@ public class HoraireFragment extends Fragment {
         }
     }
 
-    /*private List<Horaire> createHoraireList(JsonArray result) {
-        List<Horaire> horaires = new ArrayList<>();
-
-        for(JsonElement element : result) {
-            horaires.add(new Horaire(element.getAsJsonObject()));
-        }
-
-        return horaires;
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }*/
 
     /**
@@ -214,6 +173,6 @@ public class HoraireFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(Horaire item);
+        void onListFragmentInteraction(Commentaire item);
     }
 }

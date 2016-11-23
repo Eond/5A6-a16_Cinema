@@ -23,17 +23,20 @@ import java.util.List;
 import ca.qc.cstj.cinecheck.cinecheck.R;
 import ca.qc.cstj.cinecheck.cinecheck.fragments.CinemaDetailFragment;
 import ca.qc.cstj.cinecheck.cinecheck.fragments.CinemaFragment;
+import ca.qc.cstj.cinecheck.cinecheck.fragments.CommentaireFragment;
 import ca.qc.cstj.cinecheck.cinecheck.fragments.FilmDetailFragment;
 import ca.qc.cstj.cinecheck.cinecheck.fragments.FilmFragment;
 import ca.qc.cstj.cinecheck.cinecheck.fragments.HoraireFragment;
 import ca.qc.cstj.cinecheck.cinecheck.helpers.FragmentTags;
 import ca.qc.cstj.cinecheck.cinecheck.models.Cinema;
 import ca.qc.cstj.cinecheck.cinecheck.models.Film;
+import ca.qc.cstj.cinecheck.cinecheck.models.Horaire;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
                    CinemaFragment.OnListFragmentInteractionListener,
-                   FilmFragment.OnListFragmentInteractionListener {
+                   FilmFragment.OnListFragmentInteractionListener,
+                   HoraireFragment.OnListFragmentInteractionListener {
 
     private NavigationView navigationView;
     private DrawerLayout drawer;
@@ -151,51 +154,85 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListFragmentInteraction(Cinema item) {
+    public void onListFragmentInteraction(final Cinema item) {
         if (item.getUrl() == "") {
             return;
         }
         final CinemaDetailFragment fragment = CinemaDetailFragment.newInstance(item.getUrl());
-        Log.d("Cinema Detail", "START");
-        final HoraireFragment fragmenth = HoraireFragment.newInstanceC(1, fragment.horaireUrls);
-        Log.d("Horaires Cinema", "START");
 
         Runnable changeFragmentThread = new Runnable() {
             @Override
             public void run() {
-                Log.d("Cinema Detail", "RUN");
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
                 fragmentTransaction.replace(R.id.contentframe, fragment, CURRENT_TAG.toString());
                 fragmentTransaction.addToBackStack(CURRENT_TAG.toString());
                 fragmentTransaction.commitAllowingStateLoss();
-                Log.d("Cinema Detail", "END");
-            }
-        };
+                Log.d("Horaires Cinema", "START");
+                final HoraireFragment fragmenth = HoraireFragment.newInstanceC(1, item.getUrl());
 
-        Runnable changeFragmentThreadH = new Runnable() {
-            @Override
-            public void run() {
-                Log.d("Horaires Cinema", "RUN");
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-                fragmentTransaction.replace(R.id.cinema_horaires, fragmenth, CURRENT_TAG.toString());
-                //fragmentTransaction.addToBackStack(CURRENT_TAG.toString());
-                fragmentTransaction.commitAllowingStateLoss();
-                Log.d("Horaires Cinema", "END");
+                Runnable changeFragmentThreadH = new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d("Horaires Cinema", "RUN");
+                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        //fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                        fragmentTransaction.replace(R.id.cinema_horaires, fragmenth, CURRENT_TAG.toString());
+                        //fragmentTransaction.addToBackStack(CURRENT_TAG.toString());
+                        fragmentTransaction.commitAllowingStateLoss();
+                        Log.d("Horaires Cinema", "END");
+                    }
+                };
+                handler.post(changeFragmentThreadH);
             }
         };
 
         handler.post(changeFragmentThread);
-        handler.post(changeFragmentThreadH);
     }
 
     @Override
-    public void onListFragmentInteraction(Film item) {
+    public void onListFragmentInteraction(final Film item) {
         if (item.getUrl() == "") {
             return;
         }
         final Fragment fragment = FilmDetailFragment.newInstance(item.getUrl());
+
+        Runnable changeFragmentThread = new Runnable() {
+            @Override
+            public void run() {
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                fragmentTransaction.replace(R.id.contentframe, fragment, CURRENT_TAG.toString());
+                fragmentTransaction.addToBackStack(CURRENT_TAG.toString());
+                fragmentTransaction.commitAllowingStateLoss();
+
+                final Fragment fragmentc = CommentaireFragment.newInstance(item.getUrl());
+
+                Runnable changeFragmentThreadC = new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d("Commentaire Film", "RUN");
+                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        //fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                        fragmentTransaction.replace(R.id.fildet_comms, fragmentc, CURRENT_TAG.toString());
+                        //fragmentTransaction.addToBackStack(CURRENT_TAG.toString());
+                        fragmentTransaction.commitAllowingStateLoss();
+                        Log.d("Commentaire Film", "END");
+                    }
+                };
+                handler.post(changeFragmentThreadC);
+            }
+        };
+
+        handler.post(changeFragmentThread);
+    }
+
+    @Override
+    public void onListFragmentInteraction(Horaire item) {
+        if (item.getFilmUrl() == "") {
+            return;
+        }
+        final Fragment fragment = FilmDetailFragment.newInstance(item.getFilmUrl());
 
         Runnable changeFragmentThread = new Runnable() {
             @Override

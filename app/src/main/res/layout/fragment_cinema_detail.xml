@@ -40,6 +40,6 @@
         android:id="@+id/cinema_horaires"
         android:layout_below="@id/cindet_telephone"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></FrameLayout>
+        android:layout_height="match_parent"></FrameLayout>
 
 </RelativeLayout>

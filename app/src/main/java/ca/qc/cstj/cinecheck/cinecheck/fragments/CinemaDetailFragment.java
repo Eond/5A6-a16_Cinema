@@ -40,8 +40,6 @@ public class CinemaDetailFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public ArrayList<String>horaireUrls = new ArrayList<>();
-
     public CinemaDetailFragment() {
         // Required empty public constructor
     }
@@ -87,9 +85,6 @@ public class CinemaDetailFragment extends Fragment {
                             textView.setText(result.getResult().getAsJsonPrimitive("ville").getAsString());
                             textView = (TextView) view.findViewById(R.id.cindet_telephone);
                             textView.setText(result.getResult().getAsJsonPrimitive("telephone").getAsString());
-                            for (JsonElement jeh : result.getResult().get("horaires").getAsJsonArray()) {
-                                horaireUrls.add(jeh.getAsJsonObject().get("urlc").getAsString());
-                            }
 
 
                         } else if (result.getHeaders().code() >= 500 && result.getHeaders().code() < 510) {

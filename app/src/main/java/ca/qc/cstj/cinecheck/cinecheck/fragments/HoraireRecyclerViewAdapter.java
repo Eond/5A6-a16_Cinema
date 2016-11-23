@@ -2,6 +2,7 @@ package ca.qc.cstj.cinecheck.cinecheck.fragments;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,15 +54,16 @@ public class HoraireRecyclerViewAdapter extends RecyclerView.Adapter<HoraireRecy
                 .error(R.drawable.error)
                 .intoImageView(holder.mImgFilm);
         holder.mImgFilm.setVisibility(View.INVISIBLE);
-        if (mInstanceParent == "film") {
+        if (mInstanceParent == "cinema") {
             holder.mFilm.setVisibility(View.VISIBLE);
             holder.mImgFilm.setVisibility(View.VISIBLE);
         }
         else {
             holder.mCinema.setVisibility(View.VISIBLE);
         }
-        holder.mDebut.setText(horaire.getDateHeure());
-        holder.mDuree.setText(horaire.getDuree());
+        holder.mDebut.setText(horaire.getDateHeure().concat(", "));
+        //holder.mDuree.setText("0:00:00");
+        holder.mDuree.setText(formatDuree(horaire.getDuree()));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +75,25 @@ public class HoraireRecyclerViewAdapter extends RecyclerView.Adapter<HoraireRecy
                 }
             }
         });
+    }
+
+    private String formatDuree(int duree) {
+        int heure = 3600;
+        int minute = 60;
+        double val = duree;
+        int curr = (int)(val/heure);
+        String retour = "";
+        retour = retour.concat(String.valueOf(curr)).concat(":");
+        val -= curr*heure;
+        curr = (int)(val/minute);
+        if (curr < 10)
+            retour = retour.concat("0");
+        retour = retour.concat(String.valueOf(curr)).concat(":");
+        val -= curr*minute;
+        if (val < 10)
+            retour = retour.concat("0");
+        retour = retour.concat(String.valueOf((int)val));
+        return retour;
     }
 
     @Override

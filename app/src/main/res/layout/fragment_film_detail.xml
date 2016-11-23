@@ -23,6 +23,11 @@
         android:textSize="@dimen/size_titre"
         android:gravity="center_horizontal"
         android:text="(Film Titre)" />
+
+    <FrameLayout
+        android:id="@+id/fildet_comms"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></FrameLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -95,5 +100,9 @@
             android:layout_height="match_parent"
             android:text="(Film Pays)" />
     </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="TEST"/>
 
 </LinearLayout>
